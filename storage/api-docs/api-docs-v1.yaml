@@ -1,0 +1,187 @@
+openapi: "3.0.0"
+info:
+  title: "Application"
+  description: "Listagem de endpoints disponíveis na aplicação"
+  version: "1.0"
+
+securityDefinitions:
+  BasicAuth:
+    type: basic
+
+paths:
+  # Autenticação
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: "Geração de access_token"
+      description: "Retorna o access_token, token_type e ttl"
+      operationId: "getToken"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: "E-mail do usuário"
+                  type: string
+                  example: teste@teste.com
+                password:
+                  description: "Senha do usuário"
+                  type: string
+                  example: password
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXV0aC9sb2dpbiIsImlhdCI6MTcwMjgyNzg1MCwiZXhwIjoxNzAyODMxNDUwLCJuYmYiOjE3MDI4Mjc4NTAsImp0aSI6InNqT25hUUJ4eXhxWXhoNlIiLCJzdWIiOiIxMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJlbWFpbCI6InRlc3RlQHRlc3RlLmNvbSJ9.4gleENryCOaU9Z8tRhEr_ozKpkIP44-1g7doZ1onJ2U"
+                  consumer_id:
+                    type: string
+                    example: bearer
+                  active:
+                    type: integer
+                    example: 3600
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-401'
+        500:
+          description: "Erro interno da aplicação"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-500'
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: "Refresh de access_token"
+      description: "Retorna o access_token, token_type e ttl"
+      operationId: "refreshToken"
+      parameters:
+        - name: Authorization
+          in: header
+          description: Access_token válido
+          required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXV0aC9sb2dpbiIsImlhdCI6MTcwMjgyNzg1MCwiZXhwIjoxNzAyODMxNDUwLCJuYmYiOjE3MDI4Mjc4NTAsImp0aSI6InNqT25hUUJ4eXhxWXhoNlIiLCJzdWIiOiIxMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJlbWFpbCI6InRlc3RlQHRlc3RlLmNvbSJ9.4gleENryCOaU9Z8tRhEr_ozKpkIP44-1g7doZ1onJ2U"
+                  consumer_id:
+                    type: string
+                    example: bearer
+                  active:
+                    type: integer
+                    example: 3600
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-401'
+        500:
+          description: "Erro interno da aplicação"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-500'
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: "Logout de usuário"
+      description: "Invalida o access_token"
+      operationId: "deleteToken"
+      parameters:
+        - name: Authorization
+          in: header
+          description: Access_token válido
+          required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully logged out"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-401'
+        500:
+          description: "Erro interno da aplicação"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-500'
+definitions:
+  response-500:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+        example: "Ops! Ocorreu um erro inesperado ao processar a sua solicitação!"
+        error_code:
+          type: integer
+          example: 503
+  response-400:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+        example: "Erro na validação de campos!"
+        error_code:
+          type: integer
+          example: 404
+  response-401:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      error:
+        type: string
+        example: "Unauthorized"
+        error_code:
+          type: integer
+          example: 404

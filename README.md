@@ -35,7 +35,7 @@ Para atualizar a porta de exposição do Swoole, adicionamos a ENV que será uti
 
 ### Problemas
 Se o supervisord não conseguir resolver o host do nginx, verificar o resolver
-```apacheconf
+```shell
 location @swoole {
     resolver 127.0.0.11;
     ...
@@ -49,7 +49,7 @@ php -v | php --ri swoole | nginx -v
 ```
 #### MySQL
 ```shell
-docker exec -it authenticator_mysql mysql -u root -p 
+docker exec -it application_mysql mysql -u root -p 
 ```
 ```
 SELECT VERSION();
@@ -72,8 +72,8 @@ A documentação da API deve ser realizada no formato YAML e são armazenados no
 ## Serviços e Portas
 
 | Container                | Host Port | Container Port (Internal) |
-| ------------------------ | --------- | ------------------------- |
-| application_app          | `9500`    | `9502`                    |
+| ------------------------ | --------- |---------------------------|
+| application_app          | `9500`    | `9500`                    |
 | application_nginx        | `8080`    | `80`                      |
 | application_mysql        | `3307`    | `3306`                    |
 

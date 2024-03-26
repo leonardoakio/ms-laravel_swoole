@@ -1,0 +1,107 @@
+openapi: "3.0.0"
+info:
+  title: "Application"
+  description: "Listagem de endpoints disponíveis na aplicação"
+  version: "1.0"
+paths:
+  /api/v1/user:
+    get:
+      tags:
+        - Dados do usuário
+      summary: "Visualização de dados do usuário"
+      description: "Retorna todos os dados disponíveis do usuário"
+      operationId: "userData"
+      parameters:
+        - in: header
+          name: consumer_id
+          example: 1001
+          required: true
+          description: "ID do usuário"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                filters:
+                  type: array
+                  required: false
+                  description: "Filtros para busca de usuários"
+                  items:
+                    type: object
+                    properties:
+                      datetime:
+                        type: string
+                        required: false
+                        nullable: true
+                        example: "30/08/2023"
+                        description: "Data de início de busca de dados do usuário"
+                      order:
+                        type: string
+                        required: false
+                        nullable: true
+                        example: "DESC"
+                        description: "Ordenação para filtragem"
+      responses:
+        200:
+          description: "Dados do usuário buscados com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    description: "Usuário buscado na base"
+                    type: object
+                    properties:
+                      consumer_id:
+                        required: true
+                        nullable: false
+                        example: 1001
+                        description: "Consumer_id do usuário buscado"
+                      active:
+                        required: true
+                        nullable: false
+                        example: true
+                        description: "Status de conta do usuário"
+        400:
+          description: "Erro de regra de negócio na busca de usuário/s"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-400'
+        500:
+          description: "Erro interno da aplicação"
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/definitions/response-500'
+definitions:
+  response-500:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+        example: "Ops! Ocorreu um erro inesperado ao processar a sua solicitação!"
+        error_code:
+          type: integer
+          example: 503
+  response-400:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+        example: "Erro na validação de campos!"
+        error_code:
+          type: integer
+          example: 404
