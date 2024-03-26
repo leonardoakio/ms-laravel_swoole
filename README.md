@@ -1,9 +1,8 @@
 ## Compatibilidade
-- PHP >= 8.3.4
-- Laravel = 10.48.4
-- Swoole >= 5.1.1
-- Nginx >= 1.24.0
-- MySQL = 8.1.0
+
+| PHP   | Laravel  | Swoole | Nginx  | MySQL  |
+|-------|----------|--------|--------|--------|
+| 8.3.4 | 10.48.4  | 5.1.1  | 1.24.0 |  8.1.0 |
 
 ## Iniciando o projeto
 Criar o arquivo `.env` no projeto
