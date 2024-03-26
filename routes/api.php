@@ -17,3 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/phpinfo', function () {
+    ob_start();
+    phpinfo();
+    $phpInfo = ob_get_clean();
+
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: text/html; charset=UTF-8");
+
+    return $phpInfo;
+});

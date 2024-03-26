@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  application:
+    container_name: application_app
+    build:
+      context: .
+      args:
+        PHP_VERSION: '8.3.4-alpine'
+#    entrypoint: ./.docker/entrypoint.sh
+    environment:
+      - DB_HOST=application_mysql
+      - DB_DATABASE=application
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    volumes:
+      - ./:/var/www
+    ports:
+      - "9500:9500"
+      - "1215:1215"
+#      - "80:80" #http
+#      - "443:443" #https
+    networks:
+      - kong-net
+    depends_on:
+      - mysql
+
+  nginx:
+    container_name: application_nginx
+    image: nginx:alpine
+    volumes:
+      - ./:/var/www
+      - ./.docker/nginx/site.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80" # http
+      # - "443:443" # https
+    networks:
+      - kong-net
+    depends_on:
+      - application
+
+  mysql:
+    container_name: application_mysql
+    image: mysql:8.1
+    volumes:
+      - mysql_db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=application
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3307:3306"
+    networks:
+      - kong-net
+
+volumes:
+  mysql_db:
+
+networks:
+  kong-net:
+    external: true
